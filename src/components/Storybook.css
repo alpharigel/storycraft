@@ -24,17 +24,17 @@
 }
 
 .page-image {
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  border-radius: 10px;
-  overflow: hidden;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .page-image img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  display: block;
 }
 
 .page-text {

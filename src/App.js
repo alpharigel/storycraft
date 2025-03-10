@@ -63,10 +63,36 @@ function App() {
       
       // Create a simple story object from the extracted data
       if (imageUrls.length > 0 && textContents.length > 0) {
-        const pages = textContents.map((content, index) => ({
-          text: content.text,
-          image: index < imageUrls.length ? imageUrls[index] : null
-        }));
+        // Ensure we only have 3 pages maximum
+        const pages = [];
+        
+        // Map the text content types to their respective pages
+        const contentMap = textContents.reduce((map, content) => {
+          map[content.type] = content.text;
+          return map;
+        }, {});
+        
+        // Create pages in the correct order
+        if (contentMap.introduction) {
+          pages.push({
+            text: contentMap.introduction,
+            image: imageUrls.length > 0 ? imageUrls[0] : null
+          });
+        }
+        
+        if (contentMap.adventure) {
+          pages.push({
+            text: contentMap.adventure,
+            image: imageUrls.length > 1 ? imageUrls[1] : null
+          });
+        }
+        
+        if (contentMap.resolution) {
+          pages.push({
+            text: contentMap.resolution,
+            image: imageUrls.length > 2 ? imageUrls[2] : null
+          });
+        }
         
         setStory({
           output: { pages }
@@ -138,10 +164,62 @@ function App() {
     return null;
   };
 
+  const parseStoryResponse = (data) => {
+    // Check if we have the expected data structure
+    if (!data || !data.outputs) {
+      console.error('Unexpected response format:', data);
+      return null;
+    }
+    
+    try {
+      // Extract the story generation data
+      const storyData = data.outputs.story_generation || {};
+      
+      // Create exactly 3 pages for introduction, adventure, and resolution
+      const pages = [];
+      
+      // Add introduction page
+      if (storyData.introduction_text) {
+        pages.push({
+          text: storyData.introduction_text,
+          image: data.outputs.Intro_image?.output?.image_url || null
+        });
+      }
+      
+      // Add adventure page
+      if (storyData.adventure_text) {
+        pages.push({
+          text: storyData.adventure_text,
+          image: data.outputs.adventure_image?.output?.image_url || null
+        });
+      }
+      
+      // Add resolution page
+      if (storyData.resolution_text) {
+        pages.push({
+          text: storyData.resolution_text,
+          image: data.outputs.Resolution_image?.output?.image_url || null
+        });
+      }
+      
+      return {
+        output: {
+          pages
+        }
+      };
+    } catch (error) {
+      console.error('Error parsing story response:', error);
+      return null;
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Personalized Storybook Generator</h1>
+      <header className="App-header-minimal">
+        <div className="logo-container">
+          <i className="fa-solid fa-book-open"></i>
+          <span className="logo-text">StoryCraft</span>
+        </div>
       </header>
       <main>
         {!story && !isStreaming && <StoryForm onSubmit={generateStory} />}

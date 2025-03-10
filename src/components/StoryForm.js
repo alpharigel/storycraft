@@ -23,7 +23,17 @@ const StoryForm = ({ onSubmit }) => {
 
   return (
     <div className="story-form-container">
+      <div className="hero-image-container">
+        <img 
+          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/4796b7851d-08fcfd4502f1ae248dbd.png" 
+          alt="Child reading a magical book" 
+          className="hero-image"
+        />
+      </div>
+      
       <h2>Create a Personalized Storybook</h2>
+      <p className="form-subtitle">Enter your child's details below to generate a unique story just for them!</p>
+      
       <form onSubmit={handleSubmit} className="story-form">
         <div className="form-group">
           <label htmlFor="childName">Child's Name:</label>
@@ -34,6 +44,7 @@ const StoryForm = ({ onSubmit }) => {
             value={formData.childName}
             onChange={handleChange}
             required
+            placeholder="Enter your child's name"
           />
         </div>
         
@@ -56,20 +67,23 @@ const StoryForm = ({ onSubmit }) => {
         
         <div className="form-group">
           <label htmlFor="readingLevel">Reading Level:</label>
-          <select
-            id="readingLevel"
-            name="readingLevel"
-            value={formData.readingLevel}
-            onChange={handleChange}
-            required
-          >
-            <option value="Level 1">Level 1</option>
-            <option value="Level 2">Level 2</option>
-            <option value="Level 3">Level 3</option>
-          </select>
+          <div className="reading-level-buttons">
+            {['Level 1', 'Level 2', 'Level 3'].map(level => (
+              <button
+                key={level}
+                type="button"
+                className={`level-btn ${formData.readingLevel === level ? 'active' : ''}`}
+                onClick={() => setFormData({...formData, readingLevel: level})}
+              >
+                {level}
+              </button>
+            ))}
+          </div>
         </div>
         
-        <button type="submit" className="submit-btn">Generate Storybook</button>
+        <button type="submit" className="submit-btn">
+          <i className="fa-solid fa-wand-magic-sparkles"></i> Generate Storybook
+        </button>
       </form>
     </div>
   );

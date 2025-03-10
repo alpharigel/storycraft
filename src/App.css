@@ -1,25 +1,61 @@
 .App {
   text-align: center;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Inter', 'Comic Sans MS', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(to bottom, #f5f3ff, #ede9fe);
 }
 
 .App-header {
-  background-color: #4CAF50;
+  background: linear-gradient(to right, #7c3aed, #3b82f6);
   padding: 20px;
   color: white;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .App-header h1 {
   margin: 0;
   font-size: 2.5rem;
+}
+
+.App-header-minimal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 20px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-container i {
+  color: #7c3aed;
+  font-size: 1.5rem;
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+  background: linear-gradient(to right, #7c3aed, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 main {
@@ -90,4 +126,11 @@ footer {
   max-height: 300px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.raw-response {
+  text-align: left;
+  font-size: 12px;
+  overflow-x: auto;
+  max-width: 100%;
 } 
