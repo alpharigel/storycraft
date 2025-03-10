@@ -10,6 +10,8 @@ Using our webapp or (future) smartphone app children or parents can set their na
 ## Explanation of the AI model and its implementation
 We're using a combination of GPT-4o for text and Flux Fast to generate the personalized story for each child. Using our prompting and in the future guardrails we ensure age approriate storytelling that places the student in the center of the story.
 
+To set the prompts for text and image generation we are using Wordware, and exposed it as an API for the app here. https://app.wordware.ai/explore/apps/03ebb9ea-1fda-493c-86da-597e2801635e
+
 ## Ethical Considerations: 
 Ensure Bias and Fairness:
  Ensuring AI doesn't perpetuate harmful stereotypes or create unequal access.
