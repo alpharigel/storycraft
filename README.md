@@ -1,4 +1,4 @@
-# storycraft
+# Storycraft
 Improve global literacy through StoryCraft, which uses AI to create personalized stories with a program to expand literacy capabilities and interests among elementary aged children
 
 # Installation instructions
