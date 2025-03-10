@@ -1,0 +1,119 @@
+.storybook-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.storybook {
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  margin-bottom: 30px;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.page-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.page-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.page-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-align: left;
+  padding: 0 20px;
+}
+
+.page-number {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 20px;
+}
+
+.storybook-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.nav-btn, .new-story-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.nav-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #0b7dda;
+}
+
+.nav-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.new-story-btn {
+  background-color: #FF9800;
+  color: white;
+}
+
+.new-story-btn:hover {
+  background-color: #e68a00;
+}
+
+.storybook-error {
+  text-align: center;
+  padding: 30px;
+  background-color: #ffebee;
+  border-radius: 10px;
+}
+
+.storybook-error h2 {
+  color: #f44336;
+}
+
+.storybook-error button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.storybook-error button:hover {
+  background-color: #d32f2f;
+} 
