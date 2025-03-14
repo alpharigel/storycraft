@@ -116,4 +116,59 @@
 
 .storybook-error button:hover {
   background-color: #d32f2f;
+}
+
+.story-choices {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px dashed #e5e7eb;
+  text-align: center;
+}
+
+.story-choices h3 {
+  margin-bottom: 15px;
+  color: #4b5563;
+  font-size: 1.2rem;
+}
+
+.choice-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.choice-btn {
+  width: 80%;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.option-1-btn {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.option-1-btn:hover {
+  background-color: #7c3aed;
+}
+
+.option-2-btn {
+  background-color: #ec4899;
+  color: white;
+}
+
+.option-2-btn:hover {
+  background-color: #db2777;
 } 

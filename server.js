@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/api/generate-story', async (req, res) => {
   try {
     const response = await axios.post(
-      'https://app.wordware.ai/api/released-app/03ebb9ea-1fda-493c-86da-597e2801635e/run',
+      'https://app.wordware.ai/api/released-app/5f0bbd5b-d933-4fac-912f-aaa4e6772386/run',
       {
         inputs: req.body.inputs,
         version: "^3.0"
@@ -32,6 +32,7 @@ app.post('/api/generate-story', async (req, res) => {
       }
     );
     
+    console.log(response.data);
     res.json(response.data);
   } catch (error) {
     console.error('Error calling Wordware API:', error.message);

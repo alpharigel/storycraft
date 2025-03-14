@@ -10,36 +10,63 @@ function App() {
   const [error, setError] = useState(null);
   const [streamingData, setStreamingData] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [storyHistory, setStoryHistory] = useState('');
+  const [storyOptions, setStoryOptions] = useState([]);
+  const [formData, setFormData] = useState({
+    childName: '',
+    interests: 'Futbol',
+    readingLevel: 'Level 1'
+  });
 
-  const generateStory = async (formData) => {
+  const generateStory = async (newFormData, selectedOption = null) => {
     setLoading(true);
     setError(null);
     setStreamingData([]);
     setIsStreaming(true);
     
+    // Store the form data for future use
+    if (!selectedOption) {
+      setFormData(newFormData);
+    }
+    
+    // If continuing the story with an option, update the history
+    let history = storyHistory;
+    if (selectedOption) {
+      history = history + ' ' + selectedOption;
+    } else {
+      // Reset history if starting a new story
+      history = ' ';
+    }
+    
+    // Use the stored form data or the new form data
+    const currentFormData = selectedOption ? formData : newFormData;
+    
     try {
-      const response = await fetch('/api/released-app/03ebb9ea-1fda-493c-86da-597e2801635e/run', {
+      const response = await fetch('/api/released-app/5f0bbd5b-d933-4fac-912f-aaa4e6772386/run', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ww-5916h52zF1qi3SxMASUJ1HScxn1LibbpYmewHyfrJBs56tixAjGvR1'
+          'Authorization': 'Bearer ww-EFkpTZJlBulVgy6lkkX4KY01Q6UtN6g9x0dC3MdGkwVHIpn0jjVbOt'
         },
         body: JSON.stringify({
           inputs: {
-            childname: formData.childName,
-            interests: formData.interests,
-            readinglevel: formData.readingLevel
+            childname: currentFormData.childName,
+            interests: currentFormData.interests,
+            readinglevel: currentFormData.readingLevel,
+            history: history
           },
-          version: "^3.0"
+          version: "^1.0"
         })
       });
       
       if (!response.ok) {
         throw new Error('Failed to generate story');
       }
+
       
       // For streaming, just display the raw text first
       const text = await response.text();
+      console.log(text);
       
       // Try to extract and display any images from the response
       const imageUrlRegex = /"image_url":"([^"]+)"/g;
@@ -51,51 +78,86 @@ function App() {
       }
       
       // Extract text content
-      const textContentRegex = /"(introduction|adventure|resolution)_text":"([^"]+)"/g;
+      const introTextRegex = /"introduction_text":"([^"]+)"/;
+      const adventureText1Regex = /"adventure_text_1":"([^"]+)"/;
+      const adventureText2Regex = /"adventure_text_2":"([^"]+)"/;
+      const adventureText3Regex = /"adventure_text_3":"([^"]+)"/;
+      const questionTextRegex = /"question_text":"([^"]+)"/;
+
+      const introMatch = text.match(introTextRegex);
+      const adventure1Match = text.match(adventureText1Regex);
+      const adventure2Match = text.match(adventureText2Regex);
+      const adventure3Match = text.match(adventureText3Regex);
+      const questionMatch = text.match(questionTextRegex);
+
       const textContents = [];
-      
-      while ((match = textContentRegex.exec(text)) !== null) {
+
+      if (introMatch && introMatch[1]) {
         textContents.push({
-          type: match[1],
-          text: match[2]
+          type: 'introduction',
+          text: introMatch[1]
         });
       }
+
+      if (adventure1Match && adventure1Match[1]) {
+        textContents.push({
+          type: 'adventure_1',
+          text: adventure1Match[1]
+        });
+      }
+
+      if (adventure2Match && adventure2Match[1]) {
+        textContents.push({
+          type: 'adventure_2',
+          text: adventure2Match[1]
+        });
+      }
+
+      if (adventure3Match && adventure3Match[1]) {
+        textContents.push({
+          type: 'adventure_3',
+          text: adventure3Match[1]
+        });
+      }
+
+      // Extract options from the question text
+      let options = [];
+      if (questionMatch && questionMatch[1]) {
+        const questionText = questionMatch[1];
+        
+        // Extract numbered options (1. Option text, 2. Option text, etc.)
+        const optionsRegex = /\d+\.\s+([^.]+)(?:\.|\?|$)/g;
+        let optionMatch;
+        while ((optionMatch = optionsRegex.exec(questionText)) !== null) {
+          options.push(optionMatch[1].trim());
+        }
+        
+        // Add the question text as the last page
+        textContents.push({
+          type: 'question',
+          text: questionText
+        });
+      }
+
+      // Update story history with the current story text
+      const allText = textContents.map(content => content.text).join(' ');
+      setStoryHistory(history ? history + ' ' + allText : allText);
+      setStoryOptions(options);
       
       // Create a simple story object from the extracted data
       if (imageUrls.length > 0 && textContents.length > 0) {
-        // Ensure we only have 3 pages maximum
-        const pages = [];
-        
-        // Map the text content types to their respective pages
-        const contentMap = textContents.reduce((map, content) => {
-          map[content.type] = content.text;
-          return map;
-        }, {});
-        
-        // Create pages in the correct order
-        if (contentMap.introduction) {
-          pages.push({
-            text: contentMap.introduction,
-            image: imageUrls.length > 0 ? imageUrls[0] : null
-          });
-        }
-        
-        if (contentMap.adventure) {
-          pages.push({
-            text: contentMap.adventure,
-            image: imageUrls.length > 1 ? imageUrls[1] : null
-          });
-        }
-        
-        if (contentMap.resolution) {
-          pages.push({
-            text: contentMap.resolution,
-            image: imageUrls.length > 2 ? imageUrls[2] : null
-          });
-        }
+        // Create pages from the text contents
+        const pages = textContents.map((content, index) => ({
+          text: content.text,
+          image: index < imageUrls.length ? imageUrls[index] : null,
+          type: content.type
+        }));
         
         setStory({
-          output: { pages }
+          output: { 
+            pages,
+            options
+          }
         });
       } else {
         // Try to parse as JSON as a fallback
@@ -120,97 +182,8 @@ function App() {
     }
   };
 
-  // Function to parse streaming response data
-  const parseStreamingResponse = (data) => {
-    if (data.type === 'outputs') {
-      const storyData = data.values;
-      
-      // Extract text and images
-      const pages = [];
-      
-      if (storyData.story_generation) {
-        // Add introduction page
-        if (storyData.story_generation.introduction_text) {
-          pages.push({
-            text: storyData.story_generation.introduction_text,
-            image: storyData.Intro_image?.output?.image_url || null
-          });
-        }
-        
-        // Add adventure page
-        if (storyData.story_generation.adventure_text) {
-          pages.push({
-            text: storyData.story_generation.adventure_text,
-            image: storyData.adventure_image?.output?.image_url || null
-          });
-        }
-        
-        // Add resolution page
-        if (storyData.story_generation.resolution_text) {
-          pages.push({
-            text: storyData.story_generation.resolution_text,
-            image: storyData.Resolution_image?.output?.image_url || null
-          });
-        }
-      }
-      
-      return {
-        output: {
-          pages
-        }
-      };
-    }
-    
-    return null;
-  };
-
-  const parseStoryResponse = (data) => {
-    // Check if we have the expected data structure
-    if (!data || !data.outputs) {
-      console.error('Unexpected response format:', data);
-      return null;
-    }
-    
-    try {
-      // Extract the story generation data
-      const storyData = data.outputs.story_generation || {};
-      
-      // Create exactly 3 pages for introduction, adventure, and resolution
-      const pages = [];
-      
-      // Add introduction page
-      if (storyData.introduction_text) {
-        pages.push({
-          text: storyData.introduction_text,
-          image: data.outputs.Intro_image?.output?.image_url || null
-        });
-      }
-      
-      // Add adventure page
-      if (storyData.adventure_text) {
-        pages.push({
-          text: storyData.adventure_text,
-          image: data.outputs.adventure_image?.output?.image_url || null
-        });
-      }
-      
-      // Add resolution page
-      if (storyData.resolution_text) {
-        pages.push({
-          text: storyData.resolution_text,
-          image: data.outputs.Resolution_image?.output?.image_url || null
-        });
-      }
-      
-      return {
-        output: {
-          pages
-        }
-      };
-    } catch (error) {
-      console.error('Error parsing story response:', error);
-      return null;
-    }
+  const continueStory = (option) => {
+    generateStory(formData, option);
   };
 
   return (
@@ -252,10 +225,24 @@ function App() {
           </div>
         )}
         
-        {story && !loading && <Storybook story={story} onNewStory={() => {
-          setStory(null);
-          setStreamingData([]);
-        }} />}
+        {story && !loading && (
+          <Storybook 
+            story={story} 
+            options={storyOptions}
+            onSelectOption={continueStory}
+            onNewStory={() => {
+              setStory(null);
+              setStreamingData([]);
+              setStoryHistory('');
+              setStoryOptions([]);
+              setFormData({
+                childName: '',
+                interests: 'Futbol',
+                readingLevel: 'Level 1'
+              });
+            }} 
+          />
+        )}
       </main>
       <footer>
         <p>Powered by Wordware AI</p>
